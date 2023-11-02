@@ -1,0 +1,14 @@
+node_modules/
+public/
+.DS_Store
+.idea
+.DS_Store
+.vscode/
+.env
+.eslintcache
+.hugo_build.lock
+__checks__/screenshots
+.vercel
+checkly-github-report.md
+test-results/
+package-lock.json
