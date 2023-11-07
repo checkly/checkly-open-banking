@@ -1,12 +1,11 @@
 const { RSA } = require('./rsa.js');
-const { test } = require('@playwright/test');
 const axios = require('axios');
 const crypto = require('crypto');
 const CryptoJS = require("crypto-js");
+const { atob } = require('./atob.js')
 
 
 function findModAndExp(xs2a_form_key) {
-
   // Base64 decoding function
   function b64Decode(str) {
     str = str.replace(/-/g, '+').replace(/_/g, '/');
@@ -92,4 +91,4 @@ async function sendEncryptedResponse(lastResponse, responseForm, auth_token) {
   }
 }
   
-  export { sendEncryptedResponse, generateRandomHexString, encrypt, findModAndExp }
+module.exports = { sendEncryptedResponse, generateRandomHexString, encrypt, findModAndExp }
