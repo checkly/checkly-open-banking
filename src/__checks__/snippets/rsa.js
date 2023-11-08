@@ -1,4 +1,4 @@
-var RSA = function () {
+const RSA = function () {
 
     var dbits; // JavaScript engine analysis
   
