@@ -4,8 +4,9 @@ const crypto = require('crypto');
 const CryptoJS = require("crypto-js");
 const { atob } = require('./atob.js')
 
-
 function findModAndExp(xs2a_form_key) {
+<<<<<<< HEAD
+=======
   // Base64 decoding function
   function b64Decode(str) {
     str = str.replace(/-/g, '+').replace(/_/g, '/');
@@ -14,16 +15,13 @@ function findModAndExp(xs2a_form_key) {
     }
     return atob(str);
   }
+>>>>>>> main
 
   // Split JWT into its three parts
   const parts = xs2a_form_key.split('.');
-  const header = JSON.parse(b64Decode(parts[0]));
-  const payload = JSON.parse(b64Decode(parts[1]));
+  const header = JSON.parse(Buffer.from(parts[0], 'base64').toString('binary'));
+  const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString('binary'));
   const signature = parts[2];
-
-  // console.log("header: " + header);
-  // console.log("payload: " + payload.modulus);
-  // console.log("sig: " + signature );
 
   // Extract the modulus value from the JWK object
   const modulus = payload.modulus;

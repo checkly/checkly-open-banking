@@ -2,6 +2,7 @@ const { test, expect } = require('@playwright/test');
 const { sendEncryptedResponse } = require('./snippets/functions.js')
 
 const auth_token = process.env.KOSMA_AUTH_TOKEN
+const baseUrl = 'https://authapi.openbanking.playground.klarna.com'
 const psu_ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.122 Safari/537.36";
 const psu_ip = "10.20.30.40"
 
@@ -10,7 +11,7 @@ test.describe('Klarna Open Banking', () => {
     test('XS2A API Flow', async ({ request }) => {
       
       const startSession = await test.step('Start Session', async () => {
-        return request.put(`https://authapi.openbanking.playground.klarna.com/xs2a/v1/sessions`, {
+        return request.put(`${baseUrl}/xs2a/v1/sessions`, {
         data: {
             language: "en",
             _selected_bank: {
@@ -33,8 +34,8 @@ test.describe('Klarna Open Banking', () => {
             _aspsp_access: "prefer_psd2",
             _redirect_return_url: "http://test/auth",
             keys: {
-              hsm: "--- insert hsm-key here (white label only) ---",
-              aspsp_data: "--- insert aspsp_data-key here (white label only) ---"
+              hsm: "--- xxx ---",
+              aspsp_data: "--- xxx ---"
             }
         },
         headers: {
@@ -45,11 +46,11 @@ test.describe('Klarna Open Banking', () => {
       });
       const startSessionResponse = await startSession.json();
       const session_id = startSessionResponse.data.session_id;
-    
+      
       /* --------------------------------------------------------------------------------------- */
 
       const accountDetailsFlow = await test.step('Start Account Details Flow', async () => {
-        return request.put(`https://authapi.openbanking.playground.klarna.com/xs2a/v1/sessions/` + session_id + `/flows/account-details`, {
+        return request.put(`${baseUrl}/xs2a/v1/sessions/` + session_id + `/flows/account-details`, {
         data: {
           "account_id": "",
           "iban": "",
@@ -69,7 +70,7 @@ test.describe('Klarna Open Banking', () => {
 
       /* --------------------------------------------------------------------------------------- */
       const selectTestBank = await test.step('Select Test Bank (Germany)', async () => {
-        return request.post(`https://authapi.openbanking.playground.klarna.com/branded/xs2a/v1/wizard/` + flow_id, {
+        return request.post(`${baseUrl}/branded/xs2a/v1/wizard/` + flow_id, {
         data: {
             "bank_code": "00000",
             "country_code": "DE",
@@ -89,7 +90,7 @@ test.describe('Klarna Open Banking', () => {
       /* --------------------------------------------------------------------------------------- */ 
 
       const getFlowConfig = await test.step('Get Flow Configuration', async () => {
-        return request.get(`https://authapi.openbanking.playground.klarna.com/branded/xs2a/v1/wizard/` + flow_id, {
+        return request.get(`${baseUrl}/branded/xs2a/v1/wizard/` + flow_id, {
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Token " + auth_token,
@@ -135,7 +136,7 @@ test.describe('Klarna Open Banking', () => {
       /* --------------------------------------------------------------------------------------- */
 
       const completeFlow = await test.step('Complete Flow', async () => {
-        return request.post(`https://authapi.openbanking.playground.klarna.com/branded/xs2a/v1/wizard/` + flow_id, {
+        return request.post(`${baseUrl}/branded/xs2a/v1/wizard/` + flow_id, {
         data: {
             "redirect_id": redirect_id,
             "return_url": redirect_url,
