@@ -1,10 +1,21 @@
 const { RSA } = require('./rsa.js');
-const { test } = require('@playwright/test');
 const axios = require('axios');
 const crypto = require('crypto');
 const CryptoJS = require("crypto-js");
+const { atob } = require('./atob.js')
 
 function findModAndExp(xs2a_form_key) {
+<<<<<<< HEAD
+=======
+  // Base64 decoding function
+  function b64Decode(str) {
+    str = str.replace(/-/g, '+').replace(/_/g, '/');
+    while (str.length % 4) {
+      str += '=';
+    }
+    return atob(str);
+  }
+>>>>>>> main
 
   // Split JWT into its three parts
   const parts = xs2a_form_key.split('.');
