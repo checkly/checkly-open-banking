@@ -1,5 +1,5 @@
-const { test, expect } = require('@playwright/test');
-const { sendEncryptedResponse } = require('./snippets/functions.js')
+import { test, expect } from '@playwright/test'
+import { sendEncryptedResponse } from './snippets/functions'
 
 const auth_token = process.env.KOSMA_AUTH_TOKEN
 const baseUrl = 'https://authapi.openbanking.playground.klarna.com'
