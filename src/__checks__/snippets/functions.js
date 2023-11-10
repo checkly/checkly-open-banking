@@ -5,19 +5,10 @@ const CryptoJS = require("crypto-js");
 
 function findModAndExp(xs2a_form_key) {
 
-  // Base64 decoding function
-  function b64Decode(str) {
-    str = str.replace(/-/g, '+').replace(/_/g, '/');
-    while (str.length % 4) {
-      str += '=';
-    }
-    return Buffer.from(str, 'base64').toString('utf8');;
-  }
-
   // Split JWT into its three parts
   const parts = xs2a_form_key.split('.');
-  const header = JSON.parse(b64Decode(parts[0]));
-  const payload = JSON.parse(b64Decode(parts[1]));
+  const header = JSON.parse(Buffer.from(parts[0], 'base64').toString('binary'));
+  const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString('binary'));
   const signature = parts[2];
 
   // console.log("header: " + header);
