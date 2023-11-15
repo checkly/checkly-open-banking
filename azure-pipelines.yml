@@ -1,21 +1,58 @@
-# Node.js
-# Build a general Node.js project with npm.
-# Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
-
 trigger:
-- main
+- main  # Modify as per your trigger requirement
 
 pool:
-  vmImage: ubuntu-latest
+  vmImage: 'ubuntu-latest'
 
-steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '10.x'
-  displayName: 'Install Node.js'
+variables:
+- group: checkly-variables  # Assume you have a variable group set up with CHECKLY_API_KEY, CHECKLY_ACCOUNT_ID
+- name: ENVIRONMENT_URL
+  value: $(Build.SourceBranchUri)  # Adjust as needed
+- name: CHECKLY_TEST_ENVIRONMENT
+  value: $(Build.SourceBranchName)  # Adjust as needed
 
-- script: |
-    npm install
-    npm run build
-  displayName: 'npm install and build'
+jobs:
+- job: TestE2E
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))  # Adjust condition as needed
+  displayName: 'Test E2E on Checkly'
+
+  steps:
+  - checkout: self
+    persistCredentials: true
+    clean: true
+
+  - script: |
+      echo "Setting branch name"
+      echo "CHECKLY_TEST_REPO_BRANCH=$(git show -s --pretty=%D HEAD | tr -s ',' '\n' | grep -e 'origin/' | head -1 | sed 's/origin\///g')" >> $(Build.SourcesDirectory)/.env
+    displayName: 'Set branch name'
+
+  - task: NodeTool@0
+    inputs:
+      versionSpec: $(versionSpec)
+    displayName: 'Setup Node'
+
+  - task: Cache@2
+    inputs:
+      key: 'node | "$(Agent.OS)" | package-lock.json'
+      path: node_modules
+      restoreKeys: |
+        node | "$(Agent.OS)"
+    displayName: 'Cache node_modules'
+
+  - script: |
+      npm ci
+    displayName: 'Install dependencies'
+    condition: ne(variables['CacheRestored'], 'true')
+
+  - script: |
+      npx checkly test -e ENVIRONMENT_URL=$(ENVIRONMENT_URL) --reporter=github --record
+    displayName: 'Run checks'
+
+  - script: |
+      cat checkly-github-report.md
+    displayName: 'Create summary'
+
+  - script: |
+      npx checkly deploy --force
+    condition: and(succeeded(), eq(variables['CHECKLY_TEST_ENVIRONMENT'], 'Production'))
+    displayName: 'Deploy checks'
