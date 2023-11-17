@@ -37,16 +37,16 @@ steps:
         versionSpec: '10.x'
 
     - task: Cache@2
-      inputs:
-        key: 'package-lock.json'
-        path: $(npm_config_cache)
-      displayName: Cache NPM packages
+        inputs:
+          key: 'package-lock.json'
+          path: $(npm_config_cache)
+        displayName: Cache NPM packages
     - script: npm ci --cache $(npm_config_cache)
-      displayName: NPM Install Dependencies
+        displayName: NPM Install Dependencies
     - script: |
-        npm cache ls
-        npm cache verify
-      displayName: NPM Show cache
+          npm cache ls
+          npm cache verify
+        displayName: NPM Show cache
 
     - script: |
         npx checkly test
