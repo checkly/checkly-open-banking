@@ -41,11 +41,6 @@ jobs:
     displayName: 'Cache node_modules'
 
   - script: |
-      npm ci
-    displayName: 'Install dependencies'
-    condition: ne(variables['CacheRestored'], 'true')
-
-  - script: |
       npx checkly test -e ENVIRONMENT_URL=$(ENVIRONMENT_URL) --reporter=github --record
     displayName: 'Run checks'
 
