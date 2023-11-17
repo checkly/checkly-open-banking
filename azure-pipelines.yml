@@ -18,7 +18,11 @@ jobs:
   pool:
     vmImage: 'ubuntu-latest'
   timeoutInMinutes: 10
-  steps:
+  
+  variables:
+    npm_config_cache: $(Pipeline.Workspace)/.npm
+
+steps:
     - checkout: self
       fetchDepth: 0
 
@@ -34,19 +38,17 @@ jobs:
 
     - task: Cache@2
       inputs:
-        key: 'npm | "$(Agent.OS)" | package-lock.json'
-        restoreKeys: |
-           npm | "$(Agent.OS)"
-        path: node_modules
-      displayName: 'Cache node_modules'
+        key: 'package-lock.json'
+        path: $(npm_config_cache)
+      displayName: Cache NPM packages
+    - script: npm ci --cache $(npm_config_cache)
+      displayName: NPM Install Dependencies
+    - script: |
+        npm cache ls
+        npm cache verify
+      displayName: NPM Show cache
 
     - script: |
-        if [ ! -d "node_modules" ]; then
-          npm i
-        fi
-      displayName: 'Install dependencies'
-
-    - script: |
-        npx checkly test --reporter=list --record
+        npx checkly test
       displayName: 'Run checks'
       continueOnError: true # To ensure the next steps run even if this fails
