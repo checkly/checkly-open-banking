@@ -46,7 +46,7 @@ jobs:
     displayName: 'Run a multi-line script'
 
   - script: |
-      npx checkly test --url $(Build.Repository.Uri) --reporter=github --record
+      npx checkly test --reporter=github --record
     env:
       ENVIRONMENT_URL: $(Build.Repository.Uri)
     displayName: 'Run Checkly tests'
