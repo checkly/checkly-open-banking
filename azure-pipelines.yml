@@ -43,7 +43,7 @@ jobs:
 
     - script: |
         if [ ! -d "node_modules" ]; then
-          npm ci
+          npm i
         fi
       displayName: 'Install dependencies'
 
