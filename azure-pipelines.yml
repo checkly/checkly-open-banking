@@ -40,18 +40,17 @@ jobs:
         node | "$(Agent.OS)"
     displayName: 'Cache node_modules'
 
+  - script: |
+      echo Add other commands here
+      echo $(Build.SourceBranch)
+    displayName: 'Run a multi-line script'
 
-- script: |
-    echo Add other commands here
-    echo $(Build.SourceBranch)
-  displayName: 'Run a multi-line script'
+  - script: |
+      npx checkly test --url $(Build.Repository.Uri) --reporter=github --record
+    env:
+      ENVIRONMENT_URL: $(Build.Repository.Uri)
+    displayName: 'Run Checkly tests'
 
-- script: |
-    npx checkly test --url $(Build.Repository.Uri) --reporter=github --record
-  env:
-    ENVIRONMENT_URL: $(Build.Repository.Uri)
-  displayName: 'Run Checkly tests'
-  
   - script: |
       cat checkly-github-report.md
     displayName: 'Create summary'
