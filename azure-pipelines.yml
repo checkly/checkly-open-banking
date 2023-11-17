@@ -1,4 +1,5 @@
 trigger:
+
 - main  # Modify as per your trigger requirement
 
 pool:
@@ -28,8 +29,8 @@ jobs:
 
   - task: NodeTool@0
     inputs:
-      versionSpec: $(versionSpec)
-    displayName: 'Setup Node'
+      versionSource: 'spec'
+      versionSpec: '6.10.0'
 
   - task: Cache@2
     inputs:
