@@ -30,7 +30,7 @@ jobs:
 
     - task: NodeTool@0
       inputs:
-        versionSource: 'spec'
+        versionSpec: '10.x'
 
     - task: Cache@2
       inputs:
