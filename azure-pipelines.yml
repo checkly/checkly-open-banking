@@ -42,7 +42,7 @@ steps:
         path: $(npm_config_cache)
       displayName: Cache NPM packages
     - script: npm ci --cache $(npm_config_cache)
-        displayName: NPM Install Dependencies
+      displayName: NPM Install Dependencies
     - script: |
         npm cache ls
         npm cache verify
