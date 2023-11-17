@@ -1,4 +1,6 @@
 import { CheckGroup } from 'checkly/constructs'
+import { emailChannel } from './alertChannels'
+
 
 /*
 * In this example, we bundle checks using a Check Group. We add checks to this group in two ways:
@@ -17,6 +19,8 @@ export const websiteGroup = new CheckGroup('OpenBanking-group', {
   activated: true,
   locations: ['us-east-1', 'eu-west-1'],
   tags: ['OpenBanking'],
+  alertChannels: [emailChannel],
+  muted: false,
   concurrency: 10,
   browserChecks: {
     testMatch: '*.spec.js'

@@ -11,4 +11,3 @@ __checks__/screenshots
 .vercel
 checkly-github-report.md
 test-results/
-package-lock.json

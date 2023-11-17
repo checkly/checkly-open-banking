@@ -1,5 +1,6 @@
 import * as path from 'path'
 import { MultiStepCheck } from 'checkly/constructs'
+import { emailChannel } from './alertChannels'
 import { websiteGroup } from './specGroups.check'
 
 /*
@@ -12,6 +13,8 @@ import { websiteGroup } from './specGroups.check'
 new MultiStepCheck('homepage-browser-check', {
     name: 'OpenBanking home page check',
     group: websiteGroup,
+    // alertChannels: [emailChannel],
+    // muted: false,
     code: {
       entrypoint: path.join(__dirname, 'multistep.spec.ts')
     },

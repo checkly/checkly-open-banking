@@ -5,6 +5,7 @@ const config = defineConfig({
   logicalId: 'OpenBanking-01-11-example-project',
   repoUrl: 'https://github.com/checkly/checkly-cli',
   checks: {
+    muted: true,
     locations: ['us-east-1', 'eu-west-1'],
     tags: ['OpenBanking'],
     runtimeId: '2023.09',
