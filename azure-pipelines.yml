@@ -22,7 +22,7 @@ jobs:
   variables:
     npm_config_cache: $(Pipeline.Workspace)/.npm
 
-steps:
+- steps:
     - checkout: self
       fetchDepth: 0
 
