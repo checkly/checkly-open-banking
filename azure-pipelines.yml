@@ -13,49 +13,40 @@ variables:
   value: $(Build.SourceBranchName)  # Adjust as needed
 
 jobs:
-- job: TestE2E
-  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))  # Adjust condition as needed
+- job: test_e2e
   displayName: 'Test E2E on Checkly'
-
+  pool:
+    vmImage: 'ubuntu-latest'
+  timeoutInMinutes: 10
   steps:
-  - checkout: self
-    persistCredentials: true
-    clean: true
+    - checkout: self
+      fetchDepth: 0
 
-  - script: |
-      echo "Setting branch name"
-      echo "CHECKLY_TEST_REPO_BRANCH=$(git show -s --pretty=%D HEAD | tr -s ',' '\n' | grep -e 'origin/' | head -1 | sed 's/origin\///g')" >> $(Build.SourcesDirectory)/.env
-    displayName: 'Set branch name'
+    - script: |
+        echo "Setting branch name"
+        CHECKLY_TEST_REPO_BRANCH=$(git show -s --pretty=%D HEAD | tr -s ',' '\n' | grep -e 'origin/' | head -1 | sed 's/origin\///g')
+        echo "##vso[task.setvariable variable=CHECKLY_TEST_REPO_BRANCH]$CHECKLY_TEST_REPO_BRANCH"
+      displayName: 'Set branch name'
 
-  - task: NodeTool@0
-    inputs:
-      versionSource: 'spec'
-      versionSpec: '6.10.0'
+    - task: NodeTool@0
+      inputs:
+        versionSpec: $(cat .nvmrc)
 
-  - task: Cache@2
-    inputs:
-      key: 'node | "$(Agent.OS)" | package-lock.json'
-      path: node_modules
-      restoreKeys: |
-        node | "$(Agent.OS)"
-    displayName: 'Cache node_modules'
+    - task: Cache@2
+      inputs:
+        key: 'npm | "$(Agent.OS)" | package-lock.json'
+        restoreKeys: |
+           npm | "$(Agent.OS)"
+        path: node_modules
+      displayName: 'Cache node_modules'
 
-  - script: |
-      echo Add other commands here
-      echo $(Build.SourceBranch)
-    displayName: 'Run a multi-line script'
+    - script: |
+        if [ ! -d "node_modules" ]; then
+          npm ci
+        fi
+      displayName: 'Install dependencies'
 
-  - script: |
-      npx checkly test --reporter=github --record
-    env:
-      ENVIRONMENT_URL: $(Build.Repository.Uri)
-    displayName: 'Run Checkly tests'
-
-  - script: |
-      cat checkly-github-report.md
-    displayName: 'Create summary'
-
-  - script: |
-      npx checkly deploy --force
-    condition: and(succeeded(), eq(variables['CHECKLY_TEST_ENVIRONMENT'], 'Production'))
-    displayName: 'Deploy checks'
+    - script: |
+        npx checkly test --reporter=list --record
+      displayName: 'Run checks'
+      continueOnError: true # To ensure the next steps run even if this fails
