@@ -22,10 +22,6 @@ jobs:
   variables:
     npm_config_cache: $(Pipeline.Workspace)/.npm
 
-- steps:
-    - checkout: self
-      fetchDepth: 0
-
     - script: |
         echo "Setting branch name"
         CHECKLY_TEST_REPO_BRANCH=$(git show -s --pretty=%D HEAD | tr -s ',' '\n' | grep -e 'origin/' | head -1 | sed 's/origin\///g')
