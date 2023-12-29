@@ -1,4 +1,4 @@
-const { RSA } = require('./rsa.js');
+const { RSA } = require('./jsbs.js');
 const axios = require('axios');
 const crypto = require('crypto');
 const CryptoJS = require("crypto-js");
@@ -10,10 +10,6 @@ function findModAndExp(xs2a_form_key) {
   const header = JSON.parse(Buffer.from(parts[0], 'base64').toString('binary'));
   const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString('binary'));
   const signature = parts[2];
-
-  // console.log("header: " + header);
-  // console.log("payload: " + payload.modulus);
-  // console.log("sig: " + signature );
 
   // Extract the modulus value from the JWK object
   const modulus = payload.modulus;
